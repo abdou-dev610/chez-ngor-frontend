@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Search, WifiOff } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Header from '../components/layout/Header.jsx';
 import Footer from '../components/layout/Footer.jsx';
 import MenuCard from '../components/ui/MenuCard.jsx';
@@ -15,24 +15,15 @@ export default function Menu() {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('Tous');
   const [search, setSearch] = useState('');
-  const [usingFallback, setUsingFallback] = useState(false);
 
   useEffect(() => {
     api
       .get('/menu')
       .then(({ data }) => {
-        // Si l'API répond mais la base est vide, on utilise le fallback
-        if (!data || data.length === 0) {
-          setItems(fallbackItems);
-          setUsingFallback(true);
-        } else {
-          setItems(data);
-        }
+        setItems(data && data.length > 0 ? data : fallbackItems);
       })
       .catch(() => {
-        // API inaccessible (Render endormi, CORS, réseau) → fallback local
         setItems(fallbackItems);
-        setUsingFallback(true);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -56,11 +47,11 @@ export default function Menu() {
   return (
     <>
       <Header />
-      <main>
+      <main className="min-h-screen">
         {/* Hero */}
-        <section className="bg-brand text-white py-16 text-center">
+        <section className="bg-brand text-white py-14 md:py-20 text-center px-4">
           <p className="section-label text-primary">Notre Carte</p>
-          <h1 className="mt-2 font-display text-4xl md:text-5xl font-bold text-white">
+          <h1 className="mt-2 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white">
             Notre Menu
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-sm text-white/70">
@@ -68,17 +59,11 @@ export default function Menu() {
           </p>
         </section>
 
-        <section className="max-w-7xl mx-auto px-4 md:px-6 py-12">
-          {usingFallback && (
-            <div className="mb-6 flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-700">
-              <WifiOff className="h-4 w-4 shrink-0" />
-              <span>Menu chargé en mode local — certaines informations peuvent différer.</span>
-            </div>
-          )}
-
-          {/* Filtres */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-8">
-            <div className="flex flex-wrap gap-2">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+          {/* Filtres + Recherche */}
+          <div className="flex flex-col gap-4 mb-8">
+            {/* Boutons catégories */}
+            <div className="flex flex-wrap justify-center gap-2">
               {CATEGORIES.map((c) => (
                 <button
                   key={c}
@@ -93,18 +78,20 @@ export default function Menu() {
                 </button>
               ))}
             </div>
-            <div className="relative w-full sm:w-64">
+            {/* Recherche */}
+            <div className="relative w-full sm:w-72 mx-auto">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Rechercher un plat..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="input-field pl-9 py-2"
+                className="input-field pl-9 py-2 w-full"
               />
             </div>
           </div>
 
+          {/* Contenu */}
           {loading ? (
             <Spinner />
           ) : filtered.length === 0 ? (
@@ -120,7 +107,7 @@ export default function Menu() {
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6">
               {filtered.map((item) => (
                 <MenuCard key={item._id} item={item} />
               ))}

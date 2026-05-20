@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../../api/axios.js';
 import MenuCard from '../ui/MenuCard.jsx';
 import Spinner from '../ui/Spinner.jsx';
+import { menuItems as fallbackItems } from '../../data/menuData.js';
 
 export default function FeaturedMenu() {
   const [items, setItems] = useState([]);
@@ -11,13 +12,18 @@ export default function FeaturedMenu() {
   useEffect(() => {
     api
       .get('/menu')
-      .then(({ data }) => setItems(data.slice(0, 4)))
-      .catch(console.error)
+      .then(({ data }) => {
+        const source = data && data.length > 0 ? data : fallbackItems;
+        setItems(source.slice(0, 4));
+      })
+      .catch(() => {
+        setItems(fallbackItems.slice(0, 4));
+      })
       .finally(() => setLoading(false));
   }, []);
 
   return (
-    <section className="max-w-7xl mx-auto px-4 md:px-6 py-20">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
       <div className="text-center">
         <p className="section-label">Nos Délices</p>
         <h2 className="mt-2 section-title">Menu Traditionnel</h2>
@@ -30,7 +36,7 @@ export default function FeaturedMenu() {
       {loading ? (
         <Spinner />
       ) : (
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 md:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
           {items.map((item) => (
             <MenuCard key={item._id} item={item} />
           ))}
