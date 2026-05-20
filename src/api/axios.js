@@ -33,18 +33,12 @@ api.interceptors.response.use(
   }
 );
 
-/**
- * Retourne l'URL complète d'une image de plat.
- * - Si vide → image placeholder
- * - Si URL complète (http/https) → utilisée telle quelle
- * - Si chemin local (/images/...) → servi par Vite depuis /public
- */
 export function getImageUrl(imagePath) {
   if (!imagePath) return null;
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
-  return imagePath; // chemin local servi depuis /public
+  return imagePath;
 }
 
 export default api;
