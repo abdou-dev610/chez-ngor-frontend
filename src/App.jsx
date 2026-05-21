@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop.jsx';
 import Home from './pages/Home.jsx';
 import Menu from './pages/Menu.jsx';
 import Specialites from './pages/Specialites.jsx';
@@ -16,7 +17,9 @@ import AdminLayout from './components/admin/AdminLayout.jsx';
 
 export default function App() {
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       {/* Routes publiques */}
       <Route path="/" element={<Home />} />
       <Route path="/menu" element={<Menu />} />
@@ -43,6 +46,7 @@ export default function App() {
         <Route path="testimonials" element={<TestimonialsAdmin />} />
         <Route path="messages" element={<MessagesAdmin />} />
       </Route>
-    </Routes>
+      </Routes>
+    </>
   );
 }
